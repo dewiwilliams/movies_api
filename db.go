@@ -20,22 +20,19 @@ func getItems() (*[]Movie, error) {
     if err != nil {
         return nil, err
     }
-    /*if result.Item == nil {
-        return nil, nil
-    }*/
 
     items := new([]Movie)
     err = dynamodbattribute.UnmarshalListOfMaps(result.Items, items)
     return items, nil
 }
 
-func getItem(id int) (*Movie, error) {
+func getItem(id string) (*Movie, error) {
 
     input := &dynamodb.GetItemInput{
         TableName: aws.String(os.Getenv("TABLE_NAME")),
         Key: map[string]*dynamodb.AttributeValue{
-            "movieid": {
-                N: aws.String(strconv.Itoa(id)),
+            "MovieID": {
+                S: aws.String(id),
             },
         },
     }
@@ -61,18 +58,42 @@ func putItem(movie *Movie) error {
     input := &dynamodb.PutItemInput{
         TableName: aws.String(os.Getenv("TABLE_NAME")),
         Item: map[string]*dynamodb.AttributeValue{
-            "movieid": {
-                N: aws.String(strconv.Itoa(movie.movieid)),
+            "MovieID": {
+                S: aws.String(movie.MovieID),
             },
             "Title": {
                 S: aws.String(movie.Title),
             },
-            "Year": {
-                N: aws.String(strconv.Itoa(movie.Year)),
+            "Released": {
+                N: aws.String(strconv.Itoa(movie.Released)),
             },
         },
     }
 
     _, err := db.PutItem(input)
+    return err
+}
+func updateItem(movie *Movie) error {
+    input := &dynamodb.UpdateItemInput{
+        TableName: aws.String(os.Getenv("TABLE_NAME")),
+        Key: map[string]*dynamodb.AttributeValue{
+            "MovieID": {
+                S: aws.String(movie.MovieID),
+            },
+        },
+        ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+            ":title": {
+                S: aws.String(movie.Title),
+            },
+            ":released": {
+                N: aws.String(strconv.Itoa(movie.Released)),
+            },
+        },
+        ReturnValues:     aws.String("UPDATED_NEW"),
+        //UpdateExpression: aws.String("set Title = :title"),
+        UpdateExpression: aws.String("set Title = :title, Released = :released"),
+    }
+
+    _, err := db.UpdateItem(input)
     return err
 }
