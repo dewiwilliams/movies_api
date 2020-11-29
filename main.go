@@ -48,10 +48,14 @@ func showOne(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
         return serverError(err)
     }
 
-    return events.APIGatewayProxyResponse{
+    response := events.APIGatewayProxyResponse{
         StatusCode: http.StatusOK,
         Body:       string(js),
-    }, nil
+    }
+    response.Headers = make(map[string]string)
+    response.Headers["Access-Control-Allow-Origin"] = "*"
+
+    return response, nil
 }
 
 func showAll(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -65,10 +69,14 @@ func showAll(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
         return serverError(err)
     }
 
-    return events.APIGatewayProxyResponse{
+    response :=  events.APIGatewayProxyResponse{
         StatusCode: http.StatusOK,
         Body:       string(js),
-    }, nil
+    }
+    response.Headers = make(map[string]string)
+    response.Headers["Access-Control-Allow-Origin"] = "*"
+
+    return response, nil
 }
 
 func create(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
