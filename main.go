@@ -104,10 +104,15 @@ func create(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
         return serverError(err)
     }
 
-    return events.APIGatewayProxyResponse{
+    response := events.APIGatewayProxyResponse{
         StatusCode: 201,
         Body:       string(js),
-    }, nil
+    }
+
+    response.Headers = make(map[string]string)
+    response.Headers["Access-Control-Allow-Origin"] = "*"
+
+    return response, nil
 }
 func update(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
     if req.Headers["content-type"] != "application/json" && req.Headers["Content-Type"] != "application/json" {
@@ -143,10 +148,15 @@ func update(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
         return serverError(err)
     }
 
-    return events.APIGatewayProxyResponse{
+    response := events.APIGatewayProxyResponse{
         StatusCode: 202,
         Body:       string(js),
-    }, nil
+    }
+
+    response.Headers = make(map[string]string)
+    response.Headers["Access-Control-Allow-Origin"] = "*"
+
+    return response, nil
 }
 
 func router(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
