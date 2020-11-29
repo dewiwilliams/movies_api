@@ -9,7 +9,8 @@ import (
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-var db = dynamodb.New(session.New(), aws.NewConfig().WithRegion("eu-west-2"))
+//var db = dynamodb.New(session.New(), aws.NewConfig().WithRegion("eu-west-2"))
+var db = dynamodb.New(session.New(), aws.NewConfig().WithRegion(os.Getenv("TABLE_REGION")))
 
 func getItems() (*[]Movie, error) {
     input := &dynamodb.ScanInput{
